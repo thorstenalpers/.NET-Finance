@@ -11,6 +11,7 @@ jobs:
 
     env:
       Solution_Name: NetFinance.sln
+      NetFinance_Project_Path: Application/Application.csproj
       Test_Project_Path: Tests/Tests.csproj
 
     steps:
@@ -43,7 +44,7 @@ jobs:
     - name: Extract Version
       id: get_version
       run: |
-        VERSION=$(grep '<Version>' ${{ env.Test_Project_Path }} | sed -E 's/.*<Version>(.*)<\/Version>.*/\1/')
+        VERSION=$(grep '<Version>' ${{ env.NetFinance_Project_Path }} | sed -E 's/.*<Version>(.*)<\/Version>.*/\1/')
         echo "VERSION=$VERSION"
         echo "VERSION=$VERSION" >> $GITHUB_ENV
 
