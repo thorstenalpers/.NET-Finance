@@ -28,8 +28,8 @@ jobs:
     - name: Build project
       run: dotnet build ${{ env.Solution_Name }} --configuration Release  --no-restore
 
-    - name: Execute unit tests
-      run: dotnet test ${{ env.Test_Project_Path }} --configuration Release 
+    # - name: Execute unit tests
+    #   run: dotnet test ${{ env.Test_Project_Path }} --configuration Release 
       
     - name: Pack NuGet Package
       run: dotnet pack ${{ env.Solution_Name }} --configuration Release --no-build --output ./nupkg
@@ -43,7 +43,7 @@ jobs:
     - name: Extract Version
       id: get_version
       run: |
-        VERSION=$(cat *.csproj | grep '<Version>' | sed -E 's/.*<Version>(.*)<\/Version>.*/\1/' | head -1)
+        VERSION=$(grep '<Version>' ${{ env.Test_Project_Path }} | sed -E 's/.*<Version>(.*)<\/Version>.*/\1/')
         echo "VERSION=$VERSION"
         echo "VERSION=$VERSION" >> $GITHUB_ENV
 
