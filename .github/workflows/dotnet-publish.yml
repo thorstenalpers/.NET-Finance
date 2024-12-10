@@ -72,6 +72,9 @@ jobs:
     #       - See [NuGet Gallery](https://www.nuget.org/packages/YourPackageName)
     #     draft: false
     #     prerelease: false
+    - name: Add GitHub Packages NuGet Source
+      run: |
+        dotnet nuget add source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --name github --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
 
     - name: Publish to GitHub Packages
       run: dotnet nuget push ./nupkg/*.nupkg --source "github" --api-key ${{ secrets.GITHUB_TOKEN }}
