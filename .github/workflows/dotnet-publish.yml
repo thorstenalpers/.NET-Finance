@@ -2,9 +2,8 @@ name: Publish NuGet Package
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: [ "ci-improvements" ]
+
 
 jobs:
   build:
@@ -35,8 +34,33 @@ jobs:
     - name: Pack NuGet Package
       run: dotnet pack ${{ env.Solution_Name }} --configuration Release --no-build --output ./nupkg
 
-    - name: Publish to NuGet
-      if: success()
+    # - name: Publish to NuGet
+    #   if: success()
+    #   env:
+    #      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+    #   run: dotnet nuget push ./nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --api-key $NUGET_API_KEY
+
+    - name: Extract Version
+      id: get_version
+      run: |
+        VERSION=$(cat *.csproj | grep '<Version>' | sed -E 's/.*<Version>(.*)<\/Version>.*/\1/' | head -1)
+        echo "VERSION=$VERSION"
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+    - name: Create Git Tag
+      run: |
+        git tag -a "v${{ env.VERSION }}" -m "Release v${{ env.VERSION }}"
+        git push origin "v${{ env.VERSION }}"
+
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
       env:
-         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-      run: dotnet nuget push ./nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --api-key $NUGET_API_KEY
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: "v${{ env.VERSION }}"
+        release_name: "Release v${{ env.VERSION }}"
+        body: |
+          - NuGet package published
+          - See [NuGet Gallery](https://www.nuget.org/packages/YourPackageName)
+        draft: false
+        prerelease: false
