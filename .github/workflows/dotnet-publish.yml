@@ -44,31 +44,31 @@ jobs:
     - name: Extract Version
       id: get_version
       run: |
-        VERSION=$(grep '<Version>' ${{ env.NetFinance_Project_Path }} | sed -E 's/.*<Version>(.*)<\/Version>.*/\1/')
+        VERSION=$(grep '<Version>' ${{ env.Test_Project_Path }} | sed -E 's/.*<Version>(.*)<\/Version>.*/\1/')
         echo "VERSION=$VERSION"
         echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-    - name: Configure Git Credentials
-      run: |
-        echo "https://${{ secrets.GH_APIKEY }}@github.com" > ~/.git-credentials
-        git config --global credential.helper store
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
+    # - name: Configure Git Credentials
+    #   run: |
+    #     echo "https://${{ secrets.GH_APIKEY }}@github.com" > ~/.git-credentials
+    #     git config --global credential.helper store
+    #     git config --global user.name "GitHub Actions"
+    #     git config --global user.email "actions@github.com"
 
-    - name: Create Git Tag
-      run: |
-        git tag -a "v${{ env.VERSION }}" -m "Release v${{ env.VERSION }}"
-        git push origin "v${{ env.VERSION }}"
+    # - name: Create Git Tag
+    #   run: |
+    #     git tag -a "v${{ env.VERSION }}" -m "Release v${{ env.VERSION }}"
+    #     git push origin "v${{ env.VERSION }}"
 
-    - name: Create GitHub Release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: "v${{ env.VERSION }}"
-        release_name: "Release v${{ env.VERSION }}"
-        body: |
-          - NuGet package published
-          - See [NuGet Gallery](https://www.nuget.org/packages/YourPackageName)
-        draft: false
-        prerelease: false
+    # - name: Create GitHub Release
+    #   uses: actions/create-release@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     tag_name: "v${{ env.VERSION }}"
+    #     release_name: "Release v${{ env.VERSION }}"
+    #     body: |
+    #       - NuGet package published
+    #       - See [NuGet Gallery](https://www.nuget.org/packages/YourPackageName)
+    #     draft: false
+    #     prerelease: false
